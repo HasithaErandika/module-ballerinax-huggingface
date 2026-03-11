@@ -6,7 +6,7 @@ version = "@toml.version@"
 license = ["Apache-2.0"]
 authors = ["Hasitha Erandika"]
 keywords = ["huggingface", "ai", "llm", "inference", "machine-learning", "nlp"]
-# icon = "icon.png" 
+icon = "../docs/icon.png"
 repository = "https://github.com/HasithaErandika/module-ballerinax-huggingface"
 
 [build-options]
