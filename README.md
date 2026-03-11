@@ -54,6 +54,11 @@ public function main() returns error? {
 }
 ```
 
+> **Note on models and testing**
+>
+> The examples and tests in this repository use representative, publicly listed models such as `meta-llama/Llama-3.2-3B-Instruct`, `gpt2`, `distilbert-base-uncased-finetuned-sst-2-english`, `facebook/bart-large-cnn`, `Helsinki-NLP/opus-mt-en-fr`, `facebook/bart-large-mnli`, and others.  
+> These are **examples only**: whether they work for you depends on your Hugging Face token’s permissions and Inference Providers configuration. If a test or example fails with a “model_not_supported” or 404 error, switch to another model ID that supports the same task and is available for your account.
+
 ## Examples
 
 The `huggingface` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples), covering the following use cases:

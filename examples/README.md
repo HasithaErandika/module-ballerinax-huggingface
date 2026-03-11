@@ -2,45 +2,45 @@
 
 The `ballerinax/huggingface` connector provides practical examples illustrating usage in various scenarios.
 
-[//]: # (TODO: Add examples)
-1. Chat & Text Generation
-2. Text Classification
-3. Image Generation
+These examples are organized as separate Ballerina packages under this `examples/` directory and are intended as small, focused applications:
+
+1. **Chat & Text Generation** – Use LLMs for chat-style responses and free-form text completion.
+2. **Text Classification & NER** – Run sentiment analysis and extract named entities from text.
+3. **Image Generation** – Generate images from natural language prompts using text-to-image models.
+
+Each example package contains:
+
+- Its own `Ballerina.toml` file.
+- A `main.bal` file demonstrating the use case.
+- A `Config.toml` file describing the required configuration (such as the Hugging Face token).
+- A `README.md` explaining the scenario and how to run it.
 
 ## Prerequisites
 
-[//]: # (TODO: Add prerequisites)
+1. A Hugging Face account with an access token that has **Inference Providers** permissions.
+2. Java 21 and Ballerina Swan Lake installed.
+3. The `ballerinax/huggingface` module built or pulled from Ballerina Central.
+
+For each example, create a `Config.toml` file with the token, for example:
+
+```toml
+HF_TOKEN = "<YOUR_HF_TOKEN>"
+```
 
 ## Running an example
 
-Execute the following commands to build an example from the source:
+From within an example package directory (for instance, `examples/text-generation`):
 
-* To build an example:
-
-    ```bash
-    bal build
-    ```
-
-* To run an example:
-
-    ```bash
-    bal run
-    ```
+```bash
+bal run
+```
 
 ## Building the examples with the local module
 
-**Warning**: Due to the absence of support for reading local repositories for single Ballerina files, the Bala of the module is manually written to the central repository as a workaround. Consequently, the bash script may modify your local Ballerina repositories.
+To run all examples against your local changes to the connector, you can use the helper script from the `examples/` directory:
 
-Execute the following commands to build all the examples against the changes you have made to the module locally:
+```bash
+./build.sh build   # build all examples
+./build.sh run     # run all examples
+```
 
-* To build all the examples:
-
-    ```bash
-    ./build.sh build
-    ```
-
-* To run all the examples:
-
-    ```bash
-    ./build.sh run
-    ```

@@ -18,7 +18,7 @@ function testClientInit() returns error? {
 @test:Config {groups: ["chat", "live"]}
 function testChatCompletion() returns error? {
     var result = trap hfClient->/v1/chat/completions.post({
-        model: "google/gemma-2-2b-it",
+        model: "HuggingFaceH4/zephyr-7b-beta",
         messages: [{role: "user", content: "Say hello in one word."}],
         maxTokens: 10
     });
@@ -133,7 +133,7 @@ function testTranslation() returns error? {
 
 @test:Config {groups: ["image-gen", "live"]}
 function testTextToImage() returns error? {
-    var result = trap hfClient->/models/["black-forest-labs/FLUX.1-dev"]/text\-to\-image.post({
+    var result = trap hfClient->/models/["stabilityai/stable-diffusion-2-1"]/text\-to\-image.post({
         inputs: "A Ballerina robot hacking on code",
         parameters: {width: 512, height: 512, numInferenceSteps: 4}
     });
@@ -148,8 +148,11 @@ function testTextToImage() returns error? {
 
 @test:Config {groups: ["image-classification", "live"]}
 function testImageClassification() returns error? {
-    // Dummy image payload – in a real test, load bytes of a PNG/JPEG.
-    byte[] payload = [];
+    byte[]|io:Error payload = io:fileReadBytes("tests/resources/test.jpg");
+    if payload is io:Error {
+        io:println("ImageClassification live test skipped; sample image not found: ", payload.message());
+        return;
+    }
     var result = trap hfClient->/models/["google/vit-base-patch16-224"]/image\-classification.post(payload);
     if result is error {
         io:println("ImageClassification live test skipped due to API error: ", result);
@@ -162,9 +165,12 @@ function testImageClassification() returns error? {
 
 @test:Config {groups: ["asr", "live"]}
 function testAutomaticSpeechRecognition() returns error? {
-    // Dummy audio payload – in a real test, load bytes of an audio file.
-    byte[] payload = [];
-    var result = trap hfClient->/models/["openai/whisper-large-v3"]/automatic\-speech\-recognition.post(payload);
+    byte[]|io:Error payload = io:fileReadBytes("tests/resources/test.wav");
+    if payload is io:Error {
+        io:println("ASR live test skipped; sample audio not found: ", payload.message());
+        return;
+    }
+    var result = trap hfClient->/models/["openai/whisper-small"]/automatic\-speech\-recognition.post(payload);
     if result is error {
         io:println("ASR live test skipped due to API error: ", result);
         return;

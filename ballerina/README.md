@@ -20,7 +20,18 @@ Supported capabilities include:
 
 1. Create a free account at [Hugging Face](https://huggingface.co/join).
 2. Go to your [Access Tokens page](https://huggingface.co/settings/tokens).
+
+   ![Hugging Face access tokens page](https://raw.githubusercontent.com/HasithaErandika/module-ballerinax-huggingface/main/docs/setup-huggingface/get-token.png)
+
 3. Click **New token**, choose **Fine-grained**, and enable the **Inference Providers** permission. Copy this token.
+
+   ![Create fine-grained token with Inference Providers permission](https://raw.githubusercontent.com/HasithaErandika/module-ballerinax-huggingface/main/docs/setup-huggingface/type_fine-grained.png)
+
+   or else, choose **Type == Read**
+
+   ![Create read token with Inference Providers permission](https://raw.githubusercontent.com/HasithaErandika/module-ballerinax-huggingface/main/docs/setup-huggingface/type_read.png)
+
+
 4. Add the connector to your Ballerina project:
    ```bash
    bal add ballerinax/huggingface
@@ -53,6 +64,11 @@ public function main() returns error? {
     io:println("Response: ", chat?.choices);
 }
 ```
+
+> **Note on models and testing**
+>
+> The examples and tests in this package use publicly available models such as `meta-llama/Llama-3.2-3B-Instruct`, `gpt2`, `distilbert-base-uncased-finetuned-sst-2-english`, `facebook/bart-large-cnn`, `Helsinki-NLP/opus-mt-en-fr`, `facebook/bart-large-mnli`, and others.  
+> Model availability and provider access depend on your Hugging Face account, token permissions, and current Inference API support. If a given model is not available for your token, replace it with any compatible model ID that supports the same task.
 
 ## Examples
 
