@@ -8,6 +8,7 @@ authors = ["Hasitha Erandika"]
 keywords = ["huggingface", "ai", "llm", "inference", "machine-learning", "nlp"]
 icon = "../docs/icon.png"
 repository = "https://github.com/HasithaErandika/module-ballerinax-huggingface"
+readme = "Package.md"
 
 [build-options]
 observabilityIncluded = true
