@@ -1,13 +1,13 @@
 [package]
-distribution = "{{BAL_VERSION}}"
-org = "ballerinax"
-name = "{{MODULE_NAME_CC}}"
-version = "{{MODULE_VERSION}}"
+distribution = "2201.12.0"
+org = "avi0ra"
+name = "huggingface"
+version = "0.1.0"
 license = ["Apache-2.0"]
-authors = ["Ballerina"]
-keywords = []
-# icon = "icon.png" # TODO: update icon.png
-repository = "https://github.com/ballerina-platform/{{REPO_NAME}}"
+authors = ["Hasitha Erandika"]
+keywords = ["huggingface", "ai", "llm", "inference", "machine-learning", "nlp"]
+#icon = "icon.png" 
+repository = "https://github.com/HasithaErandika/module-ballerinax-huggingface"
 
 [build-options]
 observabilityIncluded = true

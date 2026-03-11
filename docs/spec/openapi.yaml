@@ -1,0 +1,616 @@
+openapi: 3.0.1
+info:
+  title: Hugging Face Inference API
+  description: API for running machine learning models hosted on the Hugging Face
+    Hub.
+  version: 1.0.0
+servers:
+- url: https://router.huggingface.co
+security:
+- bearerAuth: []
+paths:
+  /v1/chat/completions:
+    post:
+      tags:
+      - chat
+      summary: Chat Completion
+      operationId: chatCompletion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatCompletionRequest'
+        required: true
+      responses:
+        "200":
+          description: Successful chat completion response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatCompletionResponse'
+  /models/{model}:
+    post:
+      tags:
+      - text
+      summary: Text Generation
+      operationId: textGeneration
+      parameters:
+      - name: model
+        in: path
+        description: "The model ID (e.g. \"gpt2\", \"bigscience/bloom\")"
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextGenerationRequest'
+        required: true
+      responses:
+        "200":
+          description: Successful text generation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TextGenerationResult'
+  /models/{model}/text-classification:
+    post:
+      tags:
+      - text
+      summary: Text Classification
+      operationId: textClassification
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "distilbert-base-uncased-finetuned-sst-2-english")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextClassificationRequest'
+        required: true
+      responses:
+        "200":
+          description: Classification results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ClassificationLabel'
+  /models/{model}/token-classification:
+    post:
+      tags:
+      - text
+      summary: Token Classification (NER)
+      operationId: tokenClassification
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "dbmdz/bert-large-cased-finetuned-conll03-english")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenClassificationRequest'
+        required: true
+      responses:
+        "200":
+          description: Token classification entities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TokenClassificationEntity'
+  /models/{model}/feature-extraction:
+    post:
+      tags:
+      - text
+      summary: Feature Extraction (Embeddings)
+      operationId: featureExtraction
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "sentence-transformers/all-MiniLM-L6-v2")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeatureExtractionRequest'
+        required: true
+      responses:
+        "200":
+          description: The embedding vector(s)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+                    format: float
+  /models/{model}/text-to-image:
+    post:
+      tags:
+      - image
+      summary: Text-to-Image Generation
+      operationId: textToImage
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "black-forest-labs/FLUX.1-dev")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextToImageRequest'
+        required: true
+      responses:
+        "200":
+          description: PNG image bytes
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  /models/{model}/question-answering:
+    post:
+      tags:
+      - text
+      summary: Question Answering
+      operationId: questionAnswering
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "deepset/roberta-base-squad2")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionAnsweringRequest'
+        required: true
+      responses:
+        "200":
+          description: The answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionAnsweringResponse'
+  /models/{model}/summarization:
+    post:
+      tags:
+      - text
+      summary: Text Summarization
+      operationId: summarization
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "facebook/bart-large-cnn")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SummarizationRequest'
+        required: true
+      responses:
+        "200":
+          description: Summarized text
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SummarizationResult'
+  /models/{model}/translation:
+    post:
+      tags:
+      - text
+      summary: Text Translation
+      operationId: translation
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "Helsinki-NLP/opus-mt-en-si")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslationRequest'
+        required: true
+      responses:
+        "200":
+          description: Translated text
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TranslationResult'
+  /models/{model}/zero-shot-classification:
+    post:
+      tags:
+      - text
+      summary: Zero-Shot Classification
+      operationId: zeroShotClassification
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "facebook/bart-large-mnli")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZeroShotClassificationRequest'
+        required: true
+      responses:
+        "200":
+          description: Classification scores per label
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZeroShotClassificationResponse'
+  /models/{model}/image-classification:
+    post:
+      tags:
+      - image
+      summary: Image Classification
+      operationId: imageClassification
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "google/vit-base-patch16-224")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        "200":
+          description: Image classification results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImageClassificationResult'
+  /models/{model}/automatic-speech-recognition:
+    post:
+      tags:
+      - audio
+      summary: Automatic Speech Recognition
+      operationId: automaticSpeechRecognition
+      parameters:
+      - name: model
+        in: path
+        description: The model ID (e.g. "openai/whisper-large-v3")
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        "200":
+          description: Transcribed text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomaticSpeechRecognitionResponse'
+components:
+  schemas:
+    QuestionAnsweringResponse:
+      type: object
+      properties:
+        score:
+          type: number
+          format: float
+        answer:
+          type: string
+        start:
+          type: integer
+        end:
+          type: integer
+    TranslationRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          type: string
+    SummarizationResult:
+      type: object
+      properties:
+        summary_text:
+          type: string
+          x-ballerina-name: summaryText
+    ZeroShotClassificationRequestParameters:
+      required:
+      - candidate_labels
+      type: object
+      properties:
+        candidate_labels:
+          type: array
+          items:
+            type: string
+          x-ballerina-name: candidateLabels
+    TextGenerationResult:
+      type: object
+      properties:
+        generated_text:
+          type: string
+          x-ballerina-name: generatedText
+    ChatCompletionChoice:
+      type: object
+      properties:
+        finish_reason:
+          type: string
+          x-ballerina-name: finishReason
+        index:
+          type: integer
+        message:
+          $ref: '#/components/schemas/ChatMessage'
+    ChatCompletionRequest:
+      required:
+      - messages
+      - model
+      type: object
+      properties:
+        max_tokens:
+          type: integer
+          x-ballerina-name: maxTokens
+        temperature:
+          type: number
+          format: float
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+        model:
+          type: string
+    TextClassificationRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          type: string
+    TokenClassificationEntity:
+      type: object
+      properties:
+        score:
+          type: number
+          format: float
+        entity_group:
+          type: string
+          x-ballerina-name: entityGroup
+        start:
+          type: integer
+        end:
+          type: integer
+        word:
+          type: string
+    TextGenerationRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/TextGenerationParameters'
+    TextToImageParameters:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+        num_inference_steps:
+          type: integer
+          x-ballerina-name: numInferenceSteps
+    AutomaticSpeechRecognitionResponse:
+      type: object
+      properties:
+        text:
+          type: string
+    QuestionAnsweringInputs:
+      required:
+      - context
+      - question
+      type: object
+      properties:
+        question:
+          type: string
+        context:
+          type: string
+    ZeroShotClassificationRequest:
+      required:
+      - inputs
+      - parameters
+      type: object
+      properties:
+        inputs:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/ZeroShotClassificationRequestParameters'
+    TextGenerationParameters:
+      type: object
+      properties:
+        max_new_tokens:
+          type: integer
+          x-ballerina-name: maxNewTokens
+        temperature:
+          type: number
+          format: float
+        return_full_text:
+          type: boolean
+          x-ballerina-name: returnFullText
+    ZeroShotClassificationResponse:
+      type: object
+      properties:
+        sequence:
+          type: string
+        scores:
+          type: array
+          items:
+            type: number
+            format: float
+        labels:
+          type: array
+          items:
+            type: string
+    ChatMessage:
+      required:
+      - content
+      - role
+      type: object
+      properties:
+        role:
+          type: string
+        content:
+          type: string
+    ClassificationLabel:
+      type: object
+      properties:
+        score:
+          type: number
+          format: float
+        label:
+          type: string
+    ChatCompletionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        choices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatCompletionChoice'
+    SummarizationRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/SummarizationParameters'
+    ImageClassificationResult:
+      type: object
+      properties:
+        score:
+          type: number
+          format: float
+        label:
+          type: string
+    FeatureExtractionRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          type: string
+    QuestionAnsweringRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          $ref: '#/components/schemas/QuestionAnsweringInputs'
+    TextToImageRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          type: string
+        parameters:
+          $ref: '#/components/schemas/TextToImageParameters'
+    TokenClassificationRequest:
+      required:
+      - inputs
+      type: object
+      properties:
+        inputs:
+          type: string
+    TranslationResult:
+      type: object
+      properties:
+        translation_text:
+          type: string
+          x-ballerina-name: translationText
+    SummarizationParameters:
+      type: object
+      properties:
+        min_length:
+          type: integer
+          x-ballerina-name: minLength
+        max_length:
+          type: integer
+          x-ballerina-name: maxLength
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

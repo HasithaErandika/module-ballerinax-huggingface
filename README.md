@@ -1,33 +1,74 @@
-# Ballerina {{MODULE_NAME_PC}} connector
+# Ballerina HuggingFace Connector
 
-[![Build](https://github.com/ballerina-platform/{{REPO_NAME}}/actions/workflows/ci.yml/badge.svg)](https://github.com/ballerina-platform/{{REPO_NAME}}/actions/workflows/ci.yml)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/{{REPO_NAME}}.svg)](https://github.com/ballerina-platform/{{REPO_NAME}}/commits/master)
-[![GitHub Issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-library/module/{{MODULE_NAME_CC}}.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-library/labels/module%{{MODULE_NAME_CC}})
+[![Build](https://github.com/HasithaErandika/module-ballerinax-huggingface/actions/workflows/ci.yml/badge.svg)](https://github.com/HasithaErandika/module-ballerinax-huggingface/actions/workflows/ci.yml)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/HasithaErandika/module-ballerinax-huggingface.svg)](https://github.com/HasithaErandika/module-ballerinax-huggingface/commits/main)
+[![GitHub Issues](https://img.shields.io/github/issues/HasithaErandika/module-ballerinax-huggingface.svg?label=Open%20Issues)](https://github.com/HasithaErandika/module-ballerinax-huggingface/issues)
 
 ## Overview
 
-[//]: # (TODO: Add overview mentioning the purpose of the module, supported REST API versions, and other high-level details.)
+The `avi0ra/huggingface` Ballerina connector provides access to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index), enabling Ballerina applications to run AI/ML models directly.
+
+Supported capabilities include:
+- Generative AI (Chat Completions via LLMs like Llama, DeepSeek)
+- Text and Token Classification (Sentiment Analysis, Named Entity Recognition)
+- Embeddings and Feature Extraction
+- Media Generation (Text-to-Image via FLUX/Stable Diffusion)
+- NLP Tasks (Summarization, Question Answering, Translation, Zero-Shot Classification)
+- Audio and Vision Tasks (Automatic Speech Recognition, Image Classification)
 
 ## Setup guide
 
-[//]: # (TODO: Add detailed steps to obtain credentials and configure the module.)
+1. Create a free account at [Hugging Face](https://huggingface.co/join).
+2. Go to your [Access Tokens page](https://huggingface.co/settings/tokens).
+3. Click **New token**, choose **Fine-grained**, and enable the **Inference Providers** permission. Copy this token.
+4. Add the connector to your Ballerina project:
+   ```bash
+   bal add avi0ra/huggingface
+   ```
+5. Configure the token in your generic `Config.toml` or environment variables:
+   ```toml
+   token = "<YOUR_HF_TOKEN>"
+   ```
 
 ## Quickstart
 
-[//]: # (TODO: Add a quickstart guide to demonstrate a basic functionality of the module, including sample code snippets.)
+This example shows how to use the connector for a simple Chat Completion request using an LLM.
+
+```ballerina
+import ballerina/io;
+import avi0ra/huggingface;
+
+// The token will be read from Config.toml or environment variables
+configurable string token = ?;
+
+public function main() returns error? {
+    // Initialize the HuggingFace client
+    huggingface:Client hf = check new ({auth: {token}});
+
+    // Call the Chat Completions endpoint
+    huggingface:ChatCompletionResponse chat = check hf->/v1/chat/completions.post({
+        model: "meta-llama/Llama-3.2-3B-Instruct",
+        messages: [{role: "user", content: "What is Ballerina API integration?"}],
+        max_tokens: 100
+    });
+    
+    io:println("Response: ", chat?.choices);
+}
+```
 
 ## Examples
 
-The `{{MODULE_NAME_PC}}` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/{{REPO_NAME}}/tree/main/examples/), covering the following use cases:
+The `huggingface` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples), covering the following use cases:
 
-[//]: # (TODO: Add examples)
+- [Chat & Text Generation](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/text-generation) - LLM chat and raw text generation
+- [Text Classification & NER](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/text-classification) - Sentiment analysis and named entity recognition
+- [Image Generation](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/image-generation) - Text-to-image with FLUX developer models
 
 ## Build from the source
 
 ### Setting up the prerequisites
 
 1. Download and install Java SE Development Kit (JDK) version 21. You can download it from either of the following sources:
-
     * [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
     * [OpenJDK](https://adoptium.net/)
 
@@ -40,7 +81,6 @@ The `{{MODULE_NAME_PC}}` connector provides practical examples illustrating usag
    > **Note**: Ensure that the Docker daemon is running before executing any tests.
 
 4. Export Github Personal access token with read package permissions as follows,
-
     ```bash
     export packageUser=<Username>
     export packagePAT=<Personal access token>
@@ -51,49 +91,41 @@ The `{{MODULE_NAME_PC}}` connector provides practical examples illustrating usag
 Execute the commands below to build from the source.
 
 1. To build the package:
-
    ```bash
    ./gradlew clean build
    ```
 
 2. To run the tests:
-
    ```bash
    ./gradlew clean test
    ```
 
 3. To build the without the tests:
-
    ```bash
    ./gradlew clean build -x test
    ```
 
 4. To run tests against different environments:
-
    ```bash
    ./gradlew clean test -Pgroups=<Comma separated groups/test cases>
    ```
 
 5. To debug the package with a remote debugger:
-
    ```bash
    ./gradlew clean build -Pdebug=<port>
    ```
 
 6. To debug with the Ballerina language:
-
    ```bash
    ./gradlew clean build -PbalJavaDebug=<port>
    ```
 
 7. Publish the generated artifacts to the local Ballerina Central repository:
-
     ```bash
     ./gradlew clean build -PpublishToLocalCentral=true
     ```
 
 8. Publish the generated artifacts to the Ballerina Central repository:
-
    ```bash
    ./gradlew clean build -PpublishToCentral=true
    ```
@@ -110,7 +142,7 @@ All the contributors are encouraged to read the [Ballerina Code of Conduct](http
 
 ## Useful links
 
-* For more information go to the [`{{MODULE_NAME_CC}}` package](https://central.ballerina.io/ballerinax/{{MODULE_NAME_CC}}/latest).
+* For more information go to the [`huggingface` package](https://central.ballerina.io/avi0ra/huggingface/latest).
 * For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/).
 * Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
 * Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.

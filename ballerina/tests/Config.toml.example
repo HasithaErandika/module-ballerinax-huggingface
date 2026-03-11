@@ -1,0 +1,7 @@
+# Example configuration for tests.
+# Copy this file to Config.toml and fill in your token.
+# NEVER commit Config.toml to git — it is in .gitignore.
+#
+# Get your token at: https://huggingface.co/settings/tokens
+
+token = "<YOUR_HF_API_TOKEN>"

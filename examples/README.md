@@ -1,10 +1,11 @@
 # Examples
 
-The `ballerinax/{{MODULE_NAME_CC}}` connector provides practical examples illustrating usage in various scenarios.
+The `avi0ra/huggingface` connector provides practical examples illustrating usage in various scenarios.
 
 [//]: # (TODO: Add examples)
-1. 
-2. 
+1. Chat & Text Generation
+2. Text Classification
+3. Image Generation
 
 ## Prerequisites
 

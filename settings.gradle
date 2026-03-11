@@ -27,11 +27,11 @@ plugins {
     id "com.gradle.enterprise" version "3.2"
 }
 
-rootProject.name = '{{REPO_NAME}}'
+rootProject.name = 'module-ballerinax-huggingface'
 
-include ':{{MODULE_NAME_CC}}-ballerina'
+include ':huggingface-ballerina'
 
-project(':{{MODULE_NAME_CC}}-ballerina').projectDir = file("ballerina")
+project(':huggingface-ballerina').projectDir = file("ballerina")
 
 gradleEnterprise {
     buildScan {
