@@ -21,7 +21,7 @@ You can provide this token as an environment variable:
 Or via the `ConnectionConfig` record when constructing the client.
 
 ```ballerina
-import ballerinax/huggingface;
+import avi0ra/huggingface;
 import ballerina/os;
 
 configurable string token = os:getEnv("HF_TOKEN");
@@ -42,7 +42,7 @@ public function initHuggingFaceClient() returns huggingface:Client|error {
 #### Chat completions
 
 ```ballerina
-import ballerinax/huggingface;
+import avi0ra/huggingface;
 import ballerina/os;
 
 configurable string token = os:getEnv("HF_TOKEN");
@@ -67,7 +67,7 @@ public function main() returns error? {
 #### Text generation
 
 ```ballerina
-import ballerinax/huggingface;
+import avi0ra/huggingface;
 import ballerina/os;
 
 configurable string token = os:getEnv("HF_TOKEN");

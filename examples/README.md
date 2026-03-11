@@ -1,6 +1,6 @@
 # Examples
 
-The `ballerinax/huggingface` connector provides practical examples illustrating usage in various scenarios.
+The `avi0ra/huggingface` connector provides practical examples illustrating usage in various scenarios.
 
 These examples are organized as separate Ballerina packages under this `examples/` directory and are intended as small, focused applications:
 
@@ -19,7 +19,7 @@ Each example package contains:
 
 1. A Hugging Face account with an access token that has **Inference Providers** permissions.
 2. Java 21 and Ballerina Swan Lake installed.
-3. The `ballerinax/huggingface` module built or pulled from Ballerina Central.
+3. The `avi0ra/huggingface` module built or pulled from Ballerina Central.
 
 For each example, create a `Config.toml` file with the token, for example:
 

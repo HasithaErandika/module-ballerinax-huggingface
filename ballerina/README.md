@@ -6,7 +6,7 @@
 
 ## Overview
 
-The `ballerinax/huggingface` Ballerina connector provides access to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index), enabling Ballerina applications to run AI/ML models directly.
+The `avi0ra/huggingface` Ballerina connector provides access to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index), enabling Ballerina applications to run AI/ML models directly.
 
 Supported capabilities include:
 - Generative AI (Chat Completions via LLMs like Llama, DeepSeek)
@@ -34,7 +34,7 @@ Supported capabilities include:
 
 4. Add the connector to your Ballerina project:
    ```bash
-   bal add ballerinax/huggingface
+   bal add avi0ra/huggingface
    ```
 5. Configure the token in your generic `Config.toml` or environment variables, for example:
    ```toml
@@ -48,7 +48,7 @@ This example shows how to use the connector for a simple Chat Completion request
 ```ballerina
 import ballerina/io;
 import ballerina/os;
-import ballerinax/huggingface;
+import avi0ra/huggingface;
 
 configurable string token = os:getEnv("HF_TOKEN");
 
@@ -72,7 +72,7 @@ public function main() returns error? {
 
 ## Examples
 
-The `huggingface` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples), covering the following use cases:
+The `avi0ra/huggingface` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples), covering the following use cases:
 
 - [Chat & Text Generation](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/text-generation) - LLM chat and raw text generation
 - [Text Classification & NER](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/text-classification) - Sentiment analysis and named entity recognition

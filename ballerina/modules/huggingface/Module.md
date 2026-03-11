@@ -1,4 +1,4 @@
-Provides the `ballerinax/huggingface` connector for the [Hugging Face Hub](https://huggingface.co/docs/api-inference/index) Inference API.
+Provides the `avi0ra/huggingface` connector for the [Hugging Face Hub](https://huggingface.co/docs/api-inference/index) Inference API.
 
 This module contains:
 
@@ -6,5 +6,5 @@ This module contains:
 - `ConnectionConfig` – configuration for client authentication and HTTP behaviour.
 - Request/response record types for operations such as chat completions, text generation, classification, summarization, translation, embeddings, image classification, and automatic speech recognition.
 
-Use this module by importing `ballerinax/huggingface` in your Ballerina program.
+Use this module by importing `avi0ra/huggingface` in your Ballerina program.
 
