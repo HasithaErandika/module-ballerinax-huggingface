@@ -353,6 +353,7 @@ dependencies = [
 	{org = "ballerinai", name = "observe"}
 ]
 modules = [
-	{org = "ballerinax", packageName = "huggingface", moduleName = "huggingface"}
+	{org = "ballerinax", packageName = "huggingface", moduleName = "huggingface"},
+	{org = "ballerinax", packageName = "huggingface", moduleName = "huggingface.huggingface"}
 ]
 
