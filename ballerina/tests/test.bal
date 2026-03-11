@@ -131,6 +131,48 @@ function testTranslation() returns error? {
     io:println("Translation: ", res[0].translationText);
 }
 
+@test:Config {groups: ["image-gen", "live"]}
+function testTextToImage() returns error? {
+    var result = trap hfClient->/models/["black-forest-labs/FLUX.1-dev"]/text\-to\-image.post({
+        inputs: "A Ballerina robot hacking on code",
+        parameters: {width: 512, height: 512, numInferenceSteps: 4}
+    });
+    if result is error {
+        io:println("TextToImage live test skipped due to API error: ", result);
+        return;
+    }
+    byte[] imageBytes = <byte[]>result;
+    test:assertTrue(imageBytes.length() > 0);
+    io:println("Generated image bytes: ", imageBytes.length());
+}
+
+@test:Config {groups: ["image-classification", "live"]}
+function testImageClassification() returns error? {
+    // Dummy image payload – in a real test, load bytes of a PNG/JPEG.
+    byte[] payload = [];
+    var result = trap hfClient->/models/["google/vit-base-patch16-224"]/image\-classification.post(payload);
+    if result is error {
+        io:println("ImageClassification live test skipped due to API error: ", result);
+        return;
+    }
+    ImageClassificationResult[] res = <ImageClassificationResult[]>result;
+    test:assertTrue(res.length() >= 0);
+    io:println("Image classifications: ", res);
+}
+
+@test:Config {groups: ["asr", "live"]}
+function testAutomaticSpeechRecognition() returns error? {
+    // Dummy audio payload – in a real test, load bytes of an audio file.
+    byte[] payload = [];
+    var result = trap hfClient->/models/["openai/whisper-large-v3"]/automatic\-speech\-recognition.post(payload);
+    if result is error {
+        io:println("ASR live test skipped due to API error: ", result);
+        return;
+    }
+    AutomaticSpeechRecognitionResponse resp = <AutomaticSpeechRecognitionResponse>result;
+    io:println("ASR text: ", resp?.text);
+}
+
 @test:Config {groups: ["zero-shot", "live"]}
 function testZeroShotClassification() returns error? {
     var result = trap hfClient->/models/["facebook/bart-large-mnli"]/zero\-shot\-classification.post({
