@@ -1,6 +1,6 @@
 # Examples
 
-The `avi0ra/huggingface` connector provides practical examples illustrating usage in various scenarios.
+The `ballerinax/huggingface` connector provides practical examples illustrating usage in various scenarios.
 
 [//]: # (TODO: Add examples)
 1. Chat & Text Generation

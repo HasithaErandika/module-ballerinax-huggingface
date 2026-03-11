@@ -6,7 +6,7 @@
 
 ## Overview
 
-The `avi0ra/huggingface` Ballerina connector provides access to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index), enabling Ballerina applications to run AI/ML models directly.
+The `ballerinax/huggingface` Ballerina connector provides access to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index), enabling Ballerina applications to run AI/ML models directly.
 
 Supported capabilities include:
 - Generative AI (Chat Completions via LLMs like Llama, DeepSeek)
@@ -23,11 +23,11 @@ Supported capabilities include:
 3. Click **New token**, choose **Fine-grained**, and enable the **Inference Providers** permission. Copy this token.
 4. Add the connector to your Ballerina project:
    ```bash
-   bal add avi0ra/huggingface
+   bal add ballerinax/huggingface
    ```
-5. Configure the token in your generic `Config.toml` or environment variables:
+5. Configure the token in your generic `Config.toml` or environment variables, for example:
    ```toml
-   token = "<YOUR_HF_TOKEN>"
+   HF_TOKEN = "<YOUR_HF_TOKEN>"
    ```
 
 ## Quickstart
@@ -36,20 +36,18 @@ This example shows how to use the connector for a simple Chat Completion request
 
 ```ballerina
 import ballerina/io;
-import avi0ra/huggingface;
+import ballerina/os;
+import ballerinax/huggingface;
 
-// The token will be read from Config.toml or environment variables
-configurable string token = ?;
+configurable string token = os:getEnv("HF_TOKEN");
 
 public function main() returns error? {
-    // Initialize the HuggingFace client
     huggingface:Client hf = check new ({auth: {token}});
 
-    // Call the Chat Completions endpoint
     huggingface:ChatCompletionResponse chat = check hf->/v1/chat/completions.post({
         model: "meta-llama/Llama-3.2-3B-Instruct",
         messages: [{role: "user", content: "What is Ballerina API integration?"}],
-        max_tokens: 100
+        maxTokens: 100
     });
     
     io:println("Response: ", chat?.choices);

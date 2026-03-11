@@ -8,23 +8,6 @@ dependencies-toml-version = "2"
 distribution-version = "2201.13.1"
 
 [[package]]
-org = "avi0ra"
-name = "huggingface"
-version = "0.1.0"
-dependencies = [
-	{org = "ballerina", name = "data.jsondata"},
-	{org = "ballerina", name = "http"},
-	{org = "ballerina", name = "io"},
-	{org = "ballerina", name = "os"},
-	{org = "ballerina", name = "test"},
-	{org = "ballerina", name = "url"},
-	{org = "ballerinai", name = "observe"}
-]
-modules = [
-	{org = "avi0ra", packageName = "huggingface", moduleName = "huggingface"}
-]
-
-[[package]]
 org = "ballerina"
 name = "auth"
 version = "2.14.0"
@@ -354,5 +337,22 @@ dependencies = [
 ]
 modules = [
 	{org = "ballerinai", packageName = "observe", moduleName = "observe"}
+]
+
+[[package]]
+org = "ballerinax"
+name = "huggingface"
+version = "0.1.0"
+dependencies = [
+	{org = "ballerina", name = "data.jsondata"},
+	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "os"},
+	{org = "ballerina", name = "test"},
+	{org = "ballerina", name = "url"},
+	{org = "ballerinai", name = "observe"}
+]
+modules = [
+	{org = "ballerinax", packageName = "huggingface", moduleName = "huggingface"}
 ]
 
