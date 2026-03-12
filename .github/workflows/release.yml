@@ -8,9 +8,8 @@ on:
 jobs:
   call_workflow:
     name: Run Release Workflow
-    if: ${{ github.repository_owner == 'ballerina-platform' }}
     uses: ballerina-platform/ballerina-library/.github/workflows/release-package-connector-template.yml@main
     secrets: inherit
     with:
       package-name: huggingface
-      package-org: ballerinax
+      package-org: avi0ra
