@@ -22,18 +22,22 @@ Or via the `ConnectionConfig` record when constructing the client.
 
 ```ballerina
 import avi0ra/huggingface;
+import ballerina/io;
 import ballerina/os;
 
-configurable string token = os:getEnv("HF_TOKEN");
+configurable string? token = os:getEnv("HF_TOKEN");
 
 public function initHuggingFaceClient() returns huggingface:Client|error {
-    huggingface:ConnectionConfig config = {
-        auth: {
-            token: token
-        }
-    };
+    if token is string {
+        huggingface:ConnectionConfig config = {
+            auth: {
+                token: token
+            }
+        };
+        return new (config);
+    }
 
-    return new (config);
+    return error("HF_TOKEN is not set; set it in the environment or Config.toml");
 }
 ```
 
@@ -43,23 +47,28 @@ public function initHuggingFaceClient() returns huggingface:Client|error {
 
 ```ballerina
 import avi0ra/huggingface;
+import ballerina/io;
 import ballerina/os;
 
-configurable string token = os:getEnv("HF_TOKEN");
+configurable string? token = os:getEnv("HF_TOKEN");
 
 public function main() returns error? {
-    huggingface:Client hfClient = check new ({auth: {token}});
+    if token is string {
+        huggingface:Client hfClient = check new ({auth: {token}});
 
-    huggingface:ChatCompletionResponse resp = check hfClient->/v1/chat/completions.post({
-        model: "meta-llama/Llama-3.2-3B-Instruct",
-        messages: [
-            {role: "user", content: "Say hello in one sentence."}
-        ],
-        maxTokens: 32
-    });
+        huggingface:ChatCompletionResponse resp = check hfClient->/v1/chat/completions.post({
+            model: "meta-llama/Llama-3.2-3B-Instruct",
+            messages: [
+                {role: "user", content: "Say hello in one sentence."}
+            ],
+            maxTokens: 32
+        });
 
-    if resp?.choices is huggingface:ChatCompletionChoice[] {
-        io:println(resp.choices[0].message?.content);
+        if resp?.choices is huggingface:ChatCompletionChoice[] {
+            io:println(resp.choices[0].message?.content);
+        }
+    } else {
+        io:println("HF_TOKEN is not set; configure it in the environment or Config.toml.");
     }
 }
 ```
@@ -68,23 +77,28 @@ public function main() returns error? {
 
 ```ballerina
 import avi0ra/huggingface;
+import ballerina/io;
 import ballerina/os;
 
-configurable string token = os:getEnv("HF_TOKEN");
+configurable string? token = os:getEnv("HF_TOKEN");
 
 public function main() returns error? {
-    huggingface:Client hfClient = check new ({auth: {token}});
+    if token is string {
+        huggingface:Client hfClient = check new ({auth: {token}});
 
-    huggingface:TextGenerationResult[] res = check hfClient->/models/["gpt2"].post({
-        inputs: "Ballerina is designed for",
-        parameters: {
-            maxNewTokens: 20,
-            returnFullText: false
+        huggingface:TextGenerationResult[] res = check hfClient->/models/["gpt2"].post({
+            inputs: "Ballerina is designed for",
+            parameters: {
+                maxNewTokens: 20,
+                returnFullText: false
+            }
+        });
+
+        if res.length() > 0 {
+            io:println(res[0].generatedText);
         }
-    });
-
-    if res.length() > 0 {
-        io:println(res[0].generatedText);
+    } else {
+        io:println("HF_TOKEN is not set; configure it in the environment or Config.toml.");
     }
 }
 ```

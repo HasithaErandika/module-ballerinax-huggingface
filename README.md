@@ -39,18 +39,22 @@ import ballerina/io;
 import ballerina/os;
 import avi0ra/huggingface;
 
-configurable string token = os:getEnv("HF_TOKEN");
+configurable string? token = os:getEnv("HF_TOKEN");
 
 public function main() returns error? {
-    huggingface:Client hf = check new ({auth: {token}});
+    if token is string {
+        huggingface:Client hf = check new ({auth: {token}});
 
-    huggingface:ChatCompletionResponse chat = check hf->/v1/chat/completions.post({
-        model: "meta-llama/Llama-3.2-3B-Instruct",
-        messages: [{role: "user", content: "What is Ballerina API integration?"}],
-        maxTokens: 100
-    });
-    
-    io:println("Response: ", chat?.choices);
+        huggingface:ChatCompletionResponse chat = check hf->/v1/chat/completions.post({
+            model: "meta-llama/Llama-3.2-3B-Instruct",
+            messages: [{role: "user", content: "What is Ballerina API integration?"}],
+            maxTokens: 100
+        });
+        
+        io:println("Response: ", chat?.choices);
+    } else {
+        io:println("HF_TOKEN is not set; configure it in the environment or Config.toml.");
+    }
 }
 ```
 
