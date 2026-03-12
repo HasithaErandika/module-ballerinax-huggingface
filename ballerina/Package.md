@@ -86,7 +86,7 @@ public function main() returns error? {
     if token is string {
         huggingface:Client hfClient = check new ({auth: {token}});
 
-        huggingface:TextGenerationResult[] res = check hfClient->/models/["gpt2"].post({
+        huggingface:TextGenerationResult[] res = check hfClient->/hf\-inference/models/["gpt2"].post({
             inputs: "Ballerina is designed for",
             parameters: {
                 maxNewTokens: 20,

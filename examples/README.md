@@ -44,3 +44,11 @@ To run all examples against your local changes to the connector, you can use the
 ./build.sh run     # run all examples
 ```
 
+## Using Custom Models in Examples
+
+While these examples use specific model IDs (like `Llama-3.2-3B-Instruct` or `gpt2`), you can modify the `main.bal` in any example to use **any** compatible model from the Hugging Face Hub.
+
+Just ensure:
+1. The model supports the task (e.g., don't use a translation model for image generation).
+2. The model ID is passed correctly in the resource path (e.g., `hfClient->/hf\-inference/models/["your/model-id"].post(...)`).
+3. You have the necessary permissions/access for that specific model.

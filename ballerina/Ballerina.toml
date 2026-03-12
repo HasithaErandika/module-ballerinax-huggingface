@@ -2,7 +2,7 @@
 distribution = "2201.13.1"
 org = "avi0ra"
 name = "huggingface"
-version = "0.1.2"
+version = "0.2.0"
 license = ["Apache-2.0"]
 authors = ["Hasitha Erandika"]
 keywords = ["huggingface", "ai", "llm", "inference", "machine-learning", "nlp"]

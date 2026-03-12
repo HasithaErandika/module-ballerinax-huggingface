@@ -89,10 +89,40 @@ public function main() returns error? {
 }
 ```
 
-> **Note on models and testing**
->
-> The examples and tests in this package use publicly available models such as `meta-llama/Llama-3.2-3B-Instruct`, `gpt2`, `distilbert-base-uncased-finetuned-sst-2-english`, `facebook/bart-large-cnn`, `Helsinki-NLP/opus-mt-en-fr`, `facebook/bart-large-mnli`, and others.  
-> Model availability and provider access depend on your Hugging Face account, token permissions, and current Inference API support. If a given model is not available for your token, replace it with any compatible model ID that supports the same task.
+## Using Custom Models
+
+The connector works with any model available on the Hugging Face Hub. Simply pass the model ID to the relevant function.
+
+Any model ID can be used as long as it matches the task type. For example, for translation:
+
+```ballerina
+// Using a specific translation model
+var result = hfClient->/hf\-inference/models/["Helsinki-NLP/opus-mt-en-si"].post({
+    inputs: "Hello, how are you?"
+});
+
+// Or using a completely different one
+var result = hfClient->/hf\-inference/models/["facebook/nllb-200-distilled-600M"].post({
+    inputs: "Hello, how are you?"
+});
+```
+
+### The only rules to follow
+
+| Rule | Example |
+|---|---|
+| **Match the task** | Don't call a translation model with image classification |
+| **Inference API support** | Check if the model has the "Inference API" badge on its HF page |
+| **Access permissions** | Ensure the model is public or you have accepted gated access |
+
+### How to find compatible models
+
+You can browse models by task (pipeline tag) on Hugging Face:
+- [Translation Models](https://huggingface.co/models?inference_provider=hf-inference&pipeline_tag=translation)
+- [Text Classification Models](https://huggingface.co/models?inference_provider=hf-inference&pipeline_tag=text-classification)
+- [Summarization Models](https://huggingface.co/models?inference_provider=hf-inference&pipeline_tag=summarization)
+
+Just change the `pipeline_tag` value in the URL to any supported task (e.g., `text-generation`, `image-classification`, `automatic-speech-recognition`).
 
 ## Examples
 
