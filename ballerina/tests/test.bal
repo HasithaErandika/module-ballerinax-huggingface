@@ -64,7 +64,7 @@ function testTextClassification() returns error? {
 @test:Config {groups: ["ner", "live"]}
 function testTokenClassification() returns error? {
     var result = trap hfClient->/hf\-inference/models/["dslim/bert-base-NER"]/token\-classification.post({
-        inputs: "Hasitha Erandika works at WSO2 in Sri Lanka."
+        inputs: "Someone is working at WSO2 in Sri Lanka."
     });
     if result is error {
         io:println("TokenClassification live test skipped due to API error: ", result);

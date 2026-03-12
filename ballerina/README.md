@@ -97,12 +97,12 @@ Any model ID can be used as long as it matches the task type. For example, for t
 
 ```ballerina
 // Using a specific translation model
-var result = hfClient->/hf\-inference/models/["Helsinki-NLP/opus-mt-en-si"].post({
+var result = hf->/hf\-inference/models/["Helsinki-NLP/opus-mt-en-si"].post({
     inputs: "Hello, how are you?"
 });
 
 // Or using a completely different one
-var result = hfClient->/hf\-inference/models/["facebook/nllb-200-distilled-600M"].post({
+var result = hf->/hf\-inference/models/["facebook/nllb-200-distilled-600M"].post({
     inputs: "Hello, how are you?"
 });
 ```
@@ -124,10 +124,178 @@ You can browse models by task (pipeline tag) on Hugging Face:
 
 Just change the `pipeline_tag` value in the URL to any supported task (e.g., `text-generation`, `image-classification`, `automatic-speech-recognition`).
 
-## Examples
+## Supported AI Tasks & Examples
 
-The `avi0ra/huggingface` connector provides practical examples illustrating usage in various scenarios. Explore these [examples](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples), covering the following use cases:
+The connector supports 12 distinct AI capabilities. Below are code snippets for each task using the generated client. Click to expand each example.
 
-- [Chat & Text Generation](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/text-generation) - LLM chat and raw text generation
-- [Text Classification & NER](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/text-classification) - Sentiment analysis and named entity recognition
-- [Image Generation](https://github.com/HasithaErandika/module-ballerinax-huggingface/tree/main/examples/image-generation) - Text-to-image with FLUX developer models
+<details>
+<summary>Chat Completion & Text Generation</summary>
+
+Generate conversational responses or complete text using large language models.
+
+```ballerina
+huggingface:ChatCompletionResponse chat = check hf->/v1/chat/completions.post({
+    model: "katanemo/Arch-Router-1.5B:hf-inference",
+    messages: [{role: "user", content: "Say hello in one word."}],
+    maxTokens: 10
+});
+io:println("Chat: ", chat?.choices);
+```
+**Sample Output:**
+```json
+[{"finishReason":"stop","index":0,"message":{"role":"assistant","content":"Hello"}}]
+```
+</details>
+
+<details>
+<summary>Text Classification (Sentiment Analysis)</summary>
+
+Classify text into categories or determine sentiment.
+
+```ballerina
+huggingface:ClassificationLabel[][] res = check hf->/hf\-inference/models/["BAAI/bge-reranker-v2-m3"]/text\-classification.post({
+    inputs: "Ballerina makes integration elegant!"
+});
+io:println("Sentiment: ", res[0][0]?.label, " (", res[0][0]?.score, ")");
+```
+**Sample Output:** `Sentiment: LABEL_0 (2.527748E-4)`
+</details>
+
+<details>
+<summary>Token Classification (NER)</summary>
+
+Extract entities like persons, locations, or organizations from text.
+
+```ballerina
+huggingface:TokenClassificationEntity[] entities = check hf->/hf\-inference/models/["dslim/bert-base-NER"]/token\-classification.post({
+    inputs: "Someone is working at WSO2 in Sri Lanka."
+});
+io:println("NER: ", entities);
+```
+**Sample Output:**
+```json
+[{"entityGroup":"MISC","word":"WSO2","score":0.68191385},{"entityGroup":"LOC","word":"Sri Lanka","score":0.999514}]
+```
+</details>
+
+<details>
+<summary>Feature Extraction (Embeddings)</summary>
+
+Generate embeddings for text, useful for semantic search and vector databases.
+
+```ballerina
+float[] embeddings = check hf->/hf\-inference/models/["intfloat/multilingual-e5-large"]/feature\-extraction.post({
+    inputs: "Ballerina cloud-native integration."
+});
+io:println("Embedding size: ", embeddings.length());
+```
+**Sample Output:** `Embedding size: 1024`
+</details>
+
+<details>
+<summary>Question Answering</summary>
+
+Extract answers to questions based on a given context.
+
+```ballerina
+huggingface:QuestionAnsweringResponse ans = check hf->/hf\-inference/models/["deepset/roberta-base-squad2"]/question\-answering.post({
+    inputs: {
+        question: "What is Ballerina?", 
+        context: "Ballerina is an open-source language for cloud-native integration by WSO2."
+    }
+});
+io:println("Answer: ", ans?.answer);
+```
+**Sample Output:** `Answer: an open-source language for cloud-native integration by WSO2`
+</details>
+
+<details>
+<summary>Summarization</summary>
+
+Condense long text into a shorter summary.
+
+```ballerina
+huggingface:SummarizationResult[] res = check hf->/hf\-inference/models/["facebook/bart-large-cnn"]/summarization.post({
+    inputs: "Ballerina is a modern open-source programming language designed for cloud-native integration. It was created by WSO2 and features built-in concurrency, network abstractions, and a rich type system ideal for microservices.",
+    parameters: {maxLength: 40, minLength: 15}
+});
+io:println("Summary: ", res[0].summaryText);
+```
+**Sample Output:** `Summary: Ballerina is a modern open-source programming language designed for cloud-native integration...`
+</details>
+
+<details>
+<summary>Translation</summary>
+
+Translate text from one language to another.
+
+```ballerina
+huggingface:TranslationResult[] res = check hf->/hf\-inference/models/["Helsinki-NLP/opus-mt-en-fr"]/translation.post({
+    inputs: "Hello, how are you?"
+});
+io:println("Translation: ", res[0].translationText);
+```
+**Sample Output:** `Translation: Bonjour, comment allez-vous ?`
+</details>
+
+<details>
+<summary>Zero-Shot Classification</summary>
+
+Classify text without specific training data by providing possible labels.
+
+```ballerina
+huggingface:ZeroShotClassificationResponse res = check hf->/hf\-inference/models/["facebook/bart-large-mnli"]/zero\-shot\-classification.post({
+    inputs: "Ballerina is a programming language for cloud integration.",
+    parameters: {candidateLabels: ["technology", "sports", "politics"]}
+});
+io:println("ZeroShot result: ", res);
+```
+**Sample Output:** 
+```json
+[{"label":"technology","score":0.96358},{"label":"sports","score":0.03109}]
+```
+</details>
+
+<details>
+<summary>Text-to-Image Generation</summary>
+
+Generate images from text prompts.
+
+```ballerina
+byte[] imageBytes = check hf->/hf\-inference/models/["stabilityai/stable-diffusion-xl-base-1.0"]/text\-to\-image.post({
+    inputs: "A Ballerina robot hacking on code",
+    parameters: {width: 512, height: 512, numInferenceSteps: 4}
+});
+io:println("Generated image bytes: ", imageBytes.length());
+```
+**Sample Output:** `Generated image bytes: 51293`
+</details>
+
+<details>
+<summary>Image Classification</summary>
+
+Classify an image into categories.
+
+```ballerina
+byte[] payload = check io:fileReadBytes("test.jpg");
+huggingface:ImageClassificationResult[] res = check hf->/hf\-inference/models/["google/vit-base-patch16-224"]/image\-classification.post(payload);
+io:println("Image classifications: ", res);
+```
+**Sample Output:**
+```json
+[{"score":0.491866,"label":"toy terrier"},{"score":0.186933,"label":"wire-haired fox terrier"}]
+```
+</details>
+
+<details>
+<summary>Automatic Speech Recognition (ASR)</summary>
+
+Transcribe audio into text.
+
+```ballerina
+byte[] payload = check io:fileReadBytes("test.wav");
+huggingface:AutomaticSpeechRecognitionResponse res = check hf->/hf\-inference/models/["openai/whisper-large-v3-turbo"]/automatic\-speech\-recognition.post(payload);
+io:println("ASR text: ", res?.text);
+```
+**Sample Output:** `ASR text: I have a dream that one day this nation will rise up...`
+</details>
