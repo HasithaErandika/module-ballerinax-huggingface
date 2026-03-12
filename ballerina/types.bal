@@ -136,11 +136,12 @@ public type TextGenerationParameters record {
     boolean returnFullText?;
 };
 
-public type ZeroShotClassificationResponse record {
-    string sequence?;
-    float[] scores?;
-    string[] labels?;
+public type ZeroShotClassificationItem record {
+    string label?;
+    float score?;
 };
+
+public type ZeroShotClassificationResponse ZeroShotClassificationItem[];
 
 public type ChatMessage record {
     string role;

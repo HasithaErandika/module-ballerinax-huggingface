@@ -65,6 +65,30 @@ public function main() returns error? {
 }
 ```
 
+### Generic inference (any model/task)
+
+If you want to call *any* Hugging Face model (not just the typed helper methods), you can use the generic helper `inferModel`:
+
+```ballerina
+import ballerina/io;
+import ballerina/os;
+import avi0ra/huggingface;
+
+configurable string token = os:getEnv("HF_TOKEN");
+
+public function main() returns error? {
+    huggingface:Client hf = check new ({auth: {token}});
+
+    json result = check huggingface:inferModel(
+        hf,
+        "openai-community/gpt2",
+        {inputs: "Ballerina is a modern language"}
+    );
+
+    io:println(result);
+}
+```
+
 > **Note on models and testing**
 >
 > The examples and tests in this package use publicly available models such as `meta-llama/Llama-3.2-3B-Instruct`, `gpt2`, `distilbert-base-uncased-finetuned-sst-2-english`, `facebook/bart-large-cnn`, `Helsinki-NLP/opus-mt-en-fr`, `facebook/bart-large-mnli`, and others.  
