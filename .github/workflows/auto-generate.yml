@@ -11,7 +11,7 @@ on:
         description: "Ballerina version to use"
         required: false
         type: string
-        default: "{{BAL_VERSION}}"
+        default: "2201.8.0"
       distribution-zip:
         description: "Distribution URL of the Ballerina version to be used"
         required: false
