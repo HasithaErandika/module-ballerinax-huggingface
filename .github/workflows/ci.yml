@@ -13,12 +13,13 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Set up Ballerina
-        uses: ballerina-lang/setup-ballerina@v1
+        uses: ballerina-platform/setup-ballerina@v1
         with:
           version: 2201.13.1
 
@@ -31,6 +32,13 @@ jobs:
         run: |
           cd ballerina
           bal test --groups unit
+
+      - name: Create Config.toml for live tests
+        if: ${{ env.HF_TOKEN != '' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          echo 'token = "${{ env.HF_TOKEN }}"' > ballerina/tests/Config.toml
 
       - name: Run Live Tests
         if: ${{ env.HF_TOKEN != '' }}
