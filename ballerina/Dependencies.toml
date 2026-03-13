@@ -10,7 +10,7 @@ distribution-version = "2201.13.1"
 [[package]]
 org = "avi0ra"
 name = "huggingface"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
 	{org = "ballerina", name = "data.jsondata"},
 	{org = "ballerina", name = "http"},
@@ -275,7 +275,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "observe"
-version = "1.7.0"
+version = "1.7.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
