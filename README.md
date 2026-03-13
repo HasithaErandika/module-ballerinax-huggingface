@@ -9,6 +9,7 @@
 The `avi0ra/huggingface` Ballerina connector provides access to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index), enabling Ballerina applications to run AI/ML models directly.
 
 Supported capabilities include:
+
 - Generative AI (Chat Completions via LLMs like Llama, DeepSeek)
 - Text and Token Classification (Sentiment Analysis, Named Entity Recognition)
 - Embeddings and Feature Extraction
@@ -23,7 +24,7 @@ Supported capabilities include:
 3. Click **New token**, choose **Fine-grained**, and enable the **Inference Providers** permission. Copy this token.
 4. Add the connector to your Ballerina project:
    ```bash
-   bal add avi0ra/huggingface
+   bal pull avi0ra/huggingface
    ```
 5. Configure the token in your generic `Config.toml` or environment variables, for example:
    ```toml
@@ -50,7 +51,7 @@ public function main() returns error? {
             messages: [{role: "user", content: "What is Ballerina API integration?"}],
             maxTokens: 100
         });
-        
+
         io:println("Response: ", chat?.choices);
     } else {
         io:println("HF_TOKEN is not set; configure it in the environment or Config.toml.");
@@ -60,7 +61,7 @@ public function main() returns error? {
 
 ### Generic inference (any model/task)
 
-If you want to call *any* Hugging Face model (not just the typed helper methods), you can use the generic helper `inferModel`:
+If you want to call _any_ Hugging Face model (not just the typed helper methods), you can use the generic helper `inferModel`:
 
 ```ballerina
 import ballerina/io;
@@ -106,15 +107,16 @@ var result = hf->/hf\-inference/models/["facebook/nllb-200-distilled-600M"].post
 
 ### The only rules to follow
 
-| Rule | Example |
-|---|---|
-| **Match the task** | Don't call a translation model with image classification |
+| Rule                      | Example                                                         |
+| ------------------------- | --------------------------------------------------------------- |
+| **Match the task**        | Don't call a translation model with image classification        |
 | **Inference API support** | Check if the model has the "Inference API" badge on its HF page |
-| **Access permissions** | Ensure the model is public or you have accepted gated access |
+| **Access permissions**    | Ensure the model is public or you have accepted gated access    |
 
 ### How to find compatible models
 
 You can browse models by task (pipeline tag) on Hugging Face:
+
 - [Translation Models](https://huggingface.co/models?inference_provider=hf-inference&pipeline_tag=translation)
 - [Text Classification Models](https://huggingface.co/models?inference_provider=hf-inference&pipeline_tag=text-classification)
 - [Summarization Models](https://huggingface.co/models?inference_provider=hf-inference&pipeline_tag=summarization)
@@ -138,10 +140,19 @@ huggingface:ChatCompletionResponse chat = check hf->/v1/chat/completions.post({
 });
 io:println("Chat: ", chat?.choices);
 ```
+
 **Sample Output:**
+
 ```json
-[{"finishReason":"stop","index":0,"message":{"role":"assistant","content":"Hello"}}]
+[
+  {
+    "finishReason": "stop",
+    "index": 0,
+    "message": { "role": "assistant", "content": "Hello" }
+  }
+]
 ```
+
 </details>
 
 <details>
@@ -155,7 +166,9 @@ huggingface:ClassificationLabel[][] res = check hf->/hf\-inference/models/["BAAI
 });
 io:println("Sentiment: ", res[0][0]?.label, " (", res[0][0]?.score, ")");
 ```
+
 **Sample Output:** `Sentiment: LABEL_0 (2.527748E-4)`
+
 </details>
 
 <details>
@@ -169,10 +182,16 @@ huggingface:TokenClassificationEntity[] entities = check hf->/hf\-inference/mode
 });
 io:println("NER: ", entities);
 ```
+
 **Sample Output:**
+
 ```json
-[{"entityGroup":"MISC","word":"WSO2","score":0.68191385},{"entityGroup":"LOC","word":"Sri Lanka","score":0.999514}]
+[
+  { "entityGroup": "MISC", "word": "WSO2", "score": 0.68191385 },
+  { "entityGroup": "LOC", "word": "Sri Lanka", "score": 0.999514 }
+]
 ```
+
 </details>
 
 <details>
@@ -186,7 +205,9 @@ float[] embeddings = check hf->/hf\-inference/models/["intfloat/multilingual-e5-
 });
 io:println("Embedding size: ", embeddings.length());
 ```
+
 **Sample Output:** `Embedding size: 1024`
+
 </details>
 
 <details>
@@ -197,13 +218,15 @@ Extract answers to questions based on a given context.
 ```ballerina
 huggingface:QuestionAnsweringResponse ans = check hf->/hf\-inference/models/["deepset/roberta-base-squad2"]/question\-answering.post({
     inputs: {
-        question: "What is Ballerina?", 
+        question: "What is Ballerina?",
         context: "Ballerina is an open-source language for cloud-native integration by WSO2."
     }
 });
 io:println("Answer: ", ans?.answer);
 ```
+
 **Sample Output:** `Answer: an open-source language for cloud-native integration by WSO2`
+
 </details>
 
 <details>
@@ -218,7 +241,9 @@ huggingface:SummarizationResult[] res = check hf->/hf\-inference/models/["facebo
 });
 io:println("Summary: ", res[0].summaryText);
 ```
+
 **Sample Output:** `Summary: Ballerina is a modern open-source programming language designed for cloud-native integration...`
+
 </details>
 
 <details>
@@ -232,7 +257,9 @@ huggingface:TranslationResult[] res = check hf->/hf\-inference/models/["Helsinki
 });
 io:println("Translation: ", res[0].translationText);
 ```
+
 **Sample Output:** `Translation: Bonjour, comment allez-vous ?`
+
 </details>
 
 <details>
@@ -247,10 +274,16 @@ huggingface:ZeroShotClassificationResponse res = check hf->/hf\-inference/models
 });
 io:println("ZeroShot result: ", res);
 ```
-**Sample Output:** 
+
+**Sample Output:**
+
 ```json
-[{"label":"technology","score":0.96358},{"label":"sports","score":0.03109}]
+[
+  { "label": "technology", "score": 0.96358 },
+  { "label": "sports", "score": 0.03109 }
+]
 ```
+
 </details>
 
 <details>
@@ -265,7 +298,9 @@ byte[] imageBytes = check hf->/hf\-inference/models/["stabilityai/stable-diffusi
 });
 io:println("Generated image bytes: ", imageBytes.length());
 ```
+
 **Sample Output:** `Generated image bytes: 51293`
+
 </details>
 
 <details>
@@ -278,10 +313,16 @@ byte[] payload = check io:fileReadBytes("test.jpg");
 huggingface:ImageClassificationResult[] res = check hf->/hf\-inference/models/["google/vit-base-patch16-224"]/image\-classification.post(payload);
 io:println("Image classifications: ", res);
 ```
+
 **Sample Output:**
+
 ```json
-[{"score":0.491866,"label":"toy terrier"},{"score":0.186933,"label":"wire-haired fox terrier"}]
+[
+  { "score": 0.491866, "label": "toy terrier" },
+  { "score": 0.186933, "label": "wire-haired fox terrier" }
+]
 ```
+
 </details>
 
 <details>
@@ -294,7 +335,9 @@ byte[] payload = check io:fileReadBytes("test.wav");
 huggingface:AutomaticSpeechRecognitionResponse res = check hf->/hf\-inference/models/["openai/whisper-large-v3-turbo"]/automatic\-speech\-recognition.post(payload);
 io:println("ASR text: ", res?.text);
 ```
+
 **Sample Output:** `ASR text: I have a dream that one day this nation will rise up...`
+
 </details>
 
 ## Build from the source
@@ -302,8 +345,8 @@ io:println("ASR text: ", res?.text);
 ### Setting up the prerequisites
 
 1. Download and install Java SE Development Kit (JDK) version 21. You can download it from either of the following sources:
-    * [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
-    * [OpenJDK](https://adoptium.net/)
+   - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
+   - [OpenJDK](https://adoptium.net/)
 
    > **Note:** After installation, remember to set the `JAVA_HOME` environment variable to the directory where JDK was installed.
 
@@ -314,49 +357,56 @@ io:println("ASR text: ", res?.text);
    > **Note**: Ensure that the Docker daemon is running before executing any tests.
 
 4. Export Github Personal access token with read package permissions as follows,
-    ```bash
-    export packageUser=<Username>
-    export packagePAT=<Personal access token>
-    ```
+   ```bash
+   export packageUser=<Username>
+   export packagePAT=<Personal access token>
+   ```
 
 ### Build options
 
 Execute the commands below to build from the source.
 
 1. To build the package:
+
    ```bash
    ./gradlew clean build
    ```
 
 2. To run the tests:
+
    ```bash
    ./gradlew clean test
    ```
 
 3. To build the without the tests:
+
    ```bash
    ./gradlew clean build -x test
    ```
 
 4. To run tests against different environments:
+
    ```bash
    ./gradlew clean test -Pgroups=<Comma separated groups/test cases>
    ```
 
 5. To debug the package with a remote debugger:
+
    ```bash
    ./gradlew clean build -Pdebug=<port>
    ```
 
 6. To debug with the Ballerina language:
+
    ```bash
    ./gradlew clean build -PbalJavaDebug=<port>
    ```
 
 7. Publish the generated artifacts to the local Ballerina Central repository:
-    ```bash
-    ./gradlew clean build -PpublishToLocalCentral=true
-    ```
+
+   ```bash
+   ./gradlew clean build -PpublishToLocalCentral=true
+   ```
 
 8. Publish the generated artifacts to the Ballerina Central repository:
    ```bash
@@ -375,7 +425,7 @@ All the contributors are encouraged to read the [Ballerina Code of Conduct](http
 
 ## Useful links
 
-* For more information go to the [`huggingface` package](https://central.ballerina.io/avi0ra/huggingface/latest).
-* For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/).
-* Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
-* Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
+- For more information go to the [`huggingface` package](https://central.ballerina.io/avi0ra/huggingface/latest).
+- For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/).
+- Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
+- Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
