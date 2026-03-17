@@ -1,10 +1,12 @@
-Provides the `avi0ra/huggingface` connector for the [Hugging Face Hub](https://huggingface.co/docs/api-inference/index) Inference API.
+Provides the `avi0ra/huggingface` connector for the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index).
 
 This module contains:
 
-- `Client` – the HTTP client for invoking Hugging Face endpoints.
+- `Client` – typed HTTP client for 12+ AI/ML tasks (chat completion, text generation, classification, embeddings, summarization, translation, image generation, speech recognition, and more).
+- `inferModel` – generic helper for calling any model not covered by the typed operations.
+- `ragQuery` – built-in RAG pipeline with embedding, similarity ranking, and grounded generation.
+- `RetryConfig` – automatic retry with exponential backoff for cold-starting models (HTTP 503).
 - `ConnectionConfig` – configuration for client authentication and HTTP behaviour.
-- Request/response record types for operations such as chat completions, text generation, classification, summarization, translation, embeddings, image classification, and automatic speech recognition.
+- Strongly-typed request/response records for all supported operations.
 
-Use this module by importing `avi0ra/huggingface` in your Ballerina program.
-
+Use this module by importing `avi0ra/huggingface` in your Ballerina program. See `Package.md` for full API documentation and examples.

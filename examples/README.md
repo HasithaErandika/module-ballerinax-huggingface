@@ -5,8 +5,9 @@ The `avi0ra/huggingface` connector provides practical examples illustrating usag
 These examples are organized as separate Ballerina packages under this `examples/` directory and are intended as small, focused applications:
 
 1. **Chat & Text Generation** – Use LLMs for chat-style responses and free-form text completion.
-2. **Text Classification & NER** – Run sentiment analysis and extract named entities from text.
-3. **Image Generation** – Generate images from natural language prompts using text-to-image models.
+2. **Streaming Chat & RAG** – Stream tokens in real-time and build grounded answers using the built-in RAG pipeline.
+3. **Text Classification & NER** – Run sentiment analysis and extract named entities from text.
+4. **Image & Audio** – Generate images from text and run ASR/classification from URL, file, or bytes.
 
 Each example package contains:
 
