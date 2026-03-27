@@ -268,6 +268,62 @@ public isolated client class Client {
         return check body.fromJsonWithType();
     }
 
+    // ─── Batch Operations ───────────────────────────────────────────────────
+
+    # Classifies multiple texts into predefined categories.
+    #
+    # + model - The model ID
+    # + payload - Batch text classification request body or array of strings
+    # + headers - Optional HTTP headers
+    # + return - A nested array of `ClassificationLabel` results for each input, or an error
+    resource isolated function post hf\-inference/models/[string model]/text\-classification/batch(
+            string[]|BatchTextClassificationRequest payload,
+            map<string|string[]> headers = {}) returns ClassificationLabel[][]|error {
+        string resourcePath = string `/hf-inference/models/${getEncodedUri(model)}`;
+        http:Request request = new;
+        self.setHeaders(request, headers);
+        request.setPayload(jsondata:toJson(payload), "application/json");
+        http:Response resp = check self.postWithRetry(resourcePath, request);
+        json body = check self.handleJsonResponse(resp);
+        return check body.fromJsonWithType();
+    }
+
+    # Extracts feature embeddings from multiple texts.
+    #
+    # + model - The model ID
+    # + payload - Batch feature extraction request body or array of strings
+    # + headers - Optional HTTP headers
+    # + return - An array of float arrays representing the embedding vectors, or an error
+    resource isolated function post hf\-inference/models/[string model]/feature\-extraction/batch(
+            string[]|BatchFeatureExtractionRequest payload,
+            map<string|string[]> headers = {}) returns float[][]|error {
+        string resourcePath = string `/hf-inference/models/${getEncodedUri(model)}`;
+        http:Request request = new;
+        self.setHeaders(request, headers);
+        request.setPayload(jsondata:toJson(payload), "application/json");
+        http:Response resp = check self.postWithRetry(resourcePath, request);
+        json body = check self.handleJsonResponse(resp);
+        return check body.fromJsonWithType();
+    }
+
+    # Performs token-level classification on multiple texts.
+    #
+    # + model - The model ID
+    # + payload - Batch token classification request body or array of strings
+    # + headers - Optional HTTP headers
+    # + return - An array of `TokenClassificationEntity` arrays for each input, or an error
+    resource isolated function post hf\-inference/models/[string model]/token\-classification/batch(
+            string[]|BatchTokenClassificationRequest payload,
+            map<string|string[]> headers = {}) returns TokenClassificationEntity[][]|error {
+        string resourcePath = string `/hf-inference/models/${getEncodedUri(model)}`;
+        http:Request request = new;
+        self.setHeaders(request, headers);
+        request.setPayload(jsondata:toJson(payload), "application/json");
+        http:Response resp = check self.postWithRetry(resourcePath, request);
+        json body = check self.handleJsonResponse(resp);
+        return check body.fromJsonWithType();
+    }
+
     // ─── Text to Image ────────────────────────────────────────────────────────
 
     # Generates an image from a text prompt using a diffusion model.
@@ -498,4 +554,5 @@ public isolated client class Client {
         return self->/hf\-inference/models/[model]/automatic\-speech\-recognition.post(
             audioBytes, contentType, headers);
     }
+
 }

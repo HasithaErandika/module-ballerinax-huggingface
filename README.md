@@ -9,15 +9,15 @@
 The `avi0ra/huggingface` Ballerina connector provides access to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index), enabling Ballerina applications to run state-of-the-art machine learning models directly.
 
 Supported capabilities include:
-- **Generative AI** — Chat Completions and Streaming Chat via LLMs (Llama, DeepSeek, etc.)
-- **RAG Pipeline** — Built-in Retrieval-Augmented Generation with embedding, similarity search, and grounded answer generation
+- **Generative AI** — Chat Completions, Stateful Conversations, and Streaming Chat via LLMs
+- **RAG Pipeline** — Built-in Retrieval-Augmented Generation with batch embeddings and similarity search
 - **Text & Token Classification** — Sentiment Analysis, Named Entity Recognition
 - **Embeddings & Feature Extraction** — Vector generation for semantic search
 - **Media Generation** — Text-to-Image via FLUX / Stable Diffusion
 - **NLP Tasks** — Summarization, Question Answering, Translation, Zero-Shot Classification
 - **Audio & Vision** — Automatic Speech Recognition, Image Classification (from bytes, file, or URL)
 - **Auto-Retry** — Exponential backoff for cold-starting models (HTTP 503)
-- **Generic Inference** — Call any Hugging Face model with `inferModel`
+- **Generic Inference & Metadata** — `inferModel`, `batchInfer`, `getModelInfo`
 
 ## Setup guide
 
@@ -104,6 +104,35 @@ public function main() returns error? {
 }
 ```
 
+### Stateful Chat Conversation
+
+Maintain cross-turn chat history automatically using the `Conversation` class:
+```ballerina
+import ballerina/io;
+import ballerina/os;
+import avi0ra/huggingface;
+
+configurable string token = os:getEnv("HF_TOKEN");
+
+public function main() returns error? {
+    huggingface:Client hf = check new ({auth: {token}});
+
+    huggingface:Conversation conv = new (
+        hf,
+        "katanemo/Arch-Router-1.5B:hf-inference",
+        systemPrompt = "You are a helpful assistant."
+    );
+
+    string reply1 = check conv.chat("What is Ballerina?");
+    io:println("Assistant: ", reply1);
+
+    string reply2 = check conv.chat("Who created it?");
+    io:println("Assistant: ", reply2);
+
+    io:println("Turns completed: ", conv.turnCount());
+}
+```
+
 ### RAG Pipeline
 
 End-to-end Retrieval Augmented Generation in a single function call:
@@ -158,17 +187,25 @@ huggingface:Client hf = check new (
 );
 ```
 
-### Generic Inference (any model/task)
+### Generic Inference & Metadata
 
-Call any Hugging Face model not covered by the typed operations:
+Call any Hugging Face model not covered by the typed operations, or fetch metadata:
 
 ```ballerina
+// Generic Inference
 json result = check huggingface:inferModel(
     hf,
     "openai-community/gpt2",
     {inputs: "Ballerina is a modern language"}
 );
 io:println(result);
+
+// Batch Inference
+json[] batchResults = check huggingface:batchInfer(hf, ["Hello", "World"], "gpt2");
+
+// Model Metadata Verification
+huggingface:ModelAvailability available = check huggingface:checkModelAvailability(hf, "gpt2");
+io:println("Available for Inference API: ", available.available);
 ```
 
 ## Using Custom Models
@@ -455,6 +492,12 @@ Execute the commands below to build from the source.
    ```
 
 ## Changelog
+
+### 1.0.0
+- Added stateful `Conversation` class for automated chat history management
+- Added batch inference operations (`batchInfer` and typed`/batch` endpoints)
+- Added Model Metadata APIs (`getModelInfo`, `checkModelAvailability`)
+- Upgraded `ragQuery` to use batch embeddings and `RagConfig`
 
 ### 0.3.0
 - Added streaming chat completions via `/v1/chat/completions/streamed`

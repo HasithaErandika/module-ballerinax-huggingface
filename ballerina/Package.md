@@ -5,8 +5,8 @@ for running state-of-the-art machine learning models hosted on the Hugging Face 
 
 This package provides a typed `Client` with strongly-typed request and response records
 for 12 AI/ML tasks, a generic `inferModel` helper for any model, a built-in RAG pipeline,
-streaming chat completions, automatic retry for cold-starting models, and multi-modal
-helpers for loading images and audio from files or URLs.
+stateful `Conversation` management, batch inference operations, streaming chat completions,
+automatic retry for cold-starting models, and multi-modal helpers for loading images and audio.
 
 ---
 
@@ -114,6 +114,35 @@ public function main() returns error? {
         }
     };
     io:println();
+}
+```
+
+### Stateful Chat Conversation
+
+Maintain cross-turn chat history automatically using the `Conversation` class:
+```ballerina
+import ballerina/io;
+import ballerina/os;
+import avi0ra/huggingface;
+
+configurable string token = os:getEnv("HF_TOKEN");
+
+public function main() returns error? {
+    huggingface:Client hf = check new ({auth: {token}});
+
+    huggingface:Conversation conv = new (
+        hf,
+        "katanemo/Arch-Router-1.5B:hf-inference",
+        systemPrompt = "You are a helpful assistant."
+    );
+
+    string reply1 = check conv.chat("What is Ballerina?");
+    io:println("Assistant: ", reply1);
+
+    string reply2 = check conv.chat("Who created it?");
+    io:println("Assistant: ", reply2);
+
+    io:println("Turns completed: ", conv.turnCount());
 }
 ```
 
@@ -354,7 +383,35 @@ Browse available models by task:
 
 ---
 
+## Model Metadata & Batch Helpers
+
+Retrieve model information and check inference availability:
+```ballerina
+huggingface:ModelInfo info = check huggingface:getModelInfo(hf, "gpt2");
+io:println("Downloads: ", info.downloads);
+
+huggingface:ModelAvailability availability = check huggingface:checkModelAvailability(hf, "gpt2");
+io:println("Available for inference: ", availability.available);
+```
+
+Run batch inference efficiently:
+```ballerina
+json[] batchResults = check huggingface:batchInfer(
+    hf,
+    ["Hello world", "Ballerina is great"],
+    "openai-community/gpt2"
+);
+```
+
+---
+
 ## Changelog
+
+### 1.0.0
+- Added stateful `Conversation` class for automated chat history management
+- Added batch inference operations (`batchInfer` and typed`/batch` endpoints)
+- Added Model Metadata APIs (`getModelInfo`, `checkModelAvailability`)
+- Upgraded `ragQuery` to use batch embeddings and `RagConfig`
 
 ### 0.3.0
 - Added streaming chat completions via `/v1/chat/completions/streamed`

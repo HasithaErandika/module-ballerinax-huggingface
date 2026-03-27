@@ -427,3 +427,95 @@ public type RagResult record {|
     RagDocument[] sources;
     float[] scores;
 |};
+
+
+// ─── Batch Types ─────────────────────────────────────────────────────────────
+
+# Request body for batch text classification.
+public type BatchTextClassificationRequest record {
+    # Array of input strings to process
+    string[] inputs;
+};
+
+# Request body for batch feature extraction.
+public type BatchFeatureExtractionRequest record {
+    # Array of input strings to process
+    string[] inputs;
+};
+
+# Request body for batch token classification.
+public type BatchTokenClassificationRequest record {
+    # Array of input strings to process
+    string[] inputs;
+};
+
+// ─── Conversation Types ───────────────────────────────────────────────────────
+
+# A snapshot of the current conversation state.
+public type ConversationSnapshot record {|
+    # All messages in the conversation including system, user, and assistant turns
+    ChatMessage[] history;
+    # The model being used for this conversation
+    string model;
+    # Number of user/assistant exchange pairs
+    int turnCount;
+|};
+
+// ─── Model Metadata Types ─────────────────────────────────────────────────────
+
+# Metadata about a Hugging Face model retrieved from the Hub API.
+#
+# + modelId - The unique model identifier
+# + pipelineTag - The primary task category of the model
+# + 'private - Whether the model is private
+# + downloads - Total download count
+# + likes - Total likes count
+# + tags - List of tags associated with the model
+# + author - Model author or organization
+# + createdAt - Model creation timestamp
+# + lastModified - Model last modified timestamp
+public type ModelInfo record {
+    @jsondata:Name {value: "id"}
+    string modelId?;
+    @jsondata:Name {value: "pipeline_tag"}
+    string pipelineTag?;
+    boolean 'private?;
+    int downloads?;
+    int likes?;
+    string[] tags?;
+    string author?;
+    @jsondata:Name {value: "createdAt"}
+    string createdAt?;
+    @jsondata:Name {value: "lastModified"}
+    string lastModified?;
+};
+
+# Summary of model availability for inference.
+public type ModelAvailability record {|
+    # The model ID checked
+    string modelId;
+    # Whether the model is available on the Inference API
+    boolean available;
+    # The task type this model performs (e.g. "text-classification")
+    string? pipelineTag;
+    # Number of downloads — indicates popularity
+    int? downloads;
+|};
+
+// ─── Advanced RAG Types ───────────────────────────────────────────────────────
+
+# Configuration for the RAG pipeline.
+public type RagConfig record {|
+    # Embedding model ID (default: intfloat/multilingual-e5-large)
+    string embeddingModel = "intfloat/multilingual-e5-large";
+    # Generation model ID (default: katanemo/Arch-Router-1.5B:hf-inference)
+    string generationModel = "katanemo/Arch-Router-1.5B:hf-inference";
+    # Number of top documents to use as context (default: 3)
+    int topK = 3;
+    # Minimum cosine similarity score to include a document (default: 0.0)
+    float similarityThreshold = 0.0;
+    # Optional system prompt to guide the generation model
+    string systemPrompt = "";
+    # Maximum tokens for the generated answer (default: 300)
+    int maxTokens = 300;
+|};
