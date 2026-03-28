@@ -3,16 +3,13 @@
 Connects Ballerina applications to the [Hugging Face Inference API](https://huggingface.co/docs/api-inference/index)
 for running state-of-the-art machine learning models hosted on the Hugging Face Hub.
 
-This package provides a typed `Client` with strongly-typed request and response records
-for 12 AI/ML tasks, a generic `inferModel` helper for any model, a built-in RAG pipeline,
-stateful `Conversation` management, batch inference operations, streaming chat completions,
-automatic retry for cold-starting models, and multi-modal helpers for loading images and audio.
+This package provides a robust, typed `Client` equipped with strongly-typed request and response records supporting **14+ AI/ML operations**. Built for production, it features a generic `inferModel` helper for unmapped models, a native Retrieval-Augmented Generation (RAG) pipeline, comprehensive stateful `Conversation` management, robust batch inference execution, real-time streaming chat completions, automatic retry heuristics (exponential backoff) for cold-starting models, and rich multi-modal helper utilities for sourcing images and audio paths.
 
 ---
 
-## Supported AI Tasks
+## Supported AI Capabilities
 
-| Task | Resource Path | Example Model |
+| Capability | Resource Path | Example Model |
 |---|---|---|
 | Chat Completion | `/v1/chat/completions` | `katanemo/Arch-Router-1.5B:hf-inference` |
 | Streaming Chat | `/v1/chat/completions/streamed` | `katanemo/Arch-Router-1.5B:hf-inference` |
@@ -27,6 +24,7 @@ automatic retry for cold-starting models, and multi-modal helpers for loading im
 | Text-to-Image | `/hf-inference/models/{model}/text-to-image` | `stabilityai/stable-diffusion-xl-base-1.0` |
 | Image Classification | `/hf-inference/models/{model}/image-classification` | `google/vit-base-patch16-224` |
 | Automatic Speech Recognition | `/hf-inference/models/{model}/automatic-speech-recognition` | `openai/whisper-large-v3-turbo` |
+| Batch Operations | `/hf-inference/models/{model}/.../batch` | _Any compatible model_ |
 
 > Any model available on the Hugging Face Hub can be used — not just the examples above.
 > Browse by task at [huggingface.co/models](https://huggingface.co/models?inference_provider=hf-inference).
@@ -408,22 +406,24 @@ json[] batchResults = check huggingface:batchInfer(
 ## Changelog
 
 ### 1.0.0
-- Added stateful `Conversation` class for automated chat history management
-- Added batch inference operations (`batchInfer` and typed`/batch` endpoints)
-- Added Model Metadata APIs (`getModelInfo`, `checkModelAvailability`)
-- Upgraded `ragQuery` to use batch embeddings and `RagConfig`
+- Added stateful `Conversation` class for automated chat history management.
+- Added batch inference operations (`batchInfer` and typed`/batch` endpoints).
+- Added Model Metadata APIs (`getModelInfo`, `checkModelAvailability`).
+- Upgraded `ragQuery` to use batch embeddings and `RagConfig`.
 
 ### 0.3.0
-- Added streaming chat completions via `/v1/chat/completions/streamed`
-- Added RAG pipeline helper `ragQuery`
-- Added automatic retry with exponential backoff for cold-starting models (503)
-- Added image classification from file path and URL
-- Added ASR from file path and URL
-- Introduced `RetryConfig`, `RagDocument`, `RagResult`, `ImageContentType`, `AudioContentType` types
+- Added streaming chat completions via `/v1/chat/completions/streamed`.
+- Added RAG pipeline helper `ragQuery` (initial version).
+- Added automatic retry with exponential backoff for cold-starting models (503).
+- Added image classification from file path and URL.
+- Added ASR from file path and URL.
+- Introduced `RetryConfig`, `RagDocument`, `RagResult`, `ImageContentType`, `AudioContentType` types.
+- Improved generic `inferModel` helper with rich error handling.
 
-### 0.2.x
-- Initial 12 AI/ML operations
-- Generic `inferModel` helper
+### 0.2.0
+- Initial release of the `avi0ra/huggingface` connector.
+- Native support for 12 AI/ML inference operations.
+- Generic `inferModel` helper.
 
 ---
 

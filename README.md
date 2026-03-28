@@ -392,10 +392,10 @@ io:println("Generated image bytes: ", imageBytes.length());
 byte[] payload = check io:fileReadBytes("test.jpg");
 huggingface:ImageClassificationResult[] res = check hf->/hf\-inference/models/["google/vit-base-patch16-224"]/image\-classification.post(payload);
 
-// From file path (new in 0.3.0)
+// From file path
 huggingface:ImageClassificationResult[] res = check hf->/hf\-inference/models/["google/vit-base-patch16-224"]/image\-classification/file.post("image.jpg");
 
-// From URL (new in 0.3.0)
+// From URL
 huggingface:ImageClassificationResult[] res = check hf->/hf\-inference/models/["google/vit-base-patch16-224"]/image\-classification/url.post("https://example.com/image.jpg");
 
 io:println("Image classifications: ", res);
@@ -411,7 +411,7 @@ io:println("Image classifications: ", res);
 byte[] payload = check io:fileReadBytes("test.wav");
 huggingface:AutomaticSpeechRecognitionResponse res = check hf->/hf\-inference/models/["openai/whisper-large-v3-turbo"]/automatic\-speech\-recognition.post(payload);
 
-// From file path (new in 0.3.0)
+// From file path
 huggingface:AutomaticSpeechRecognitionResponse res = check hf->/hf\-inference/models/["openai/whisper-large-v3-turbo"]/automatic\-speech\-recognition/file.post("audio.flac");
 
 io:println("ASR text: ", res?.text);
@@ -494,23 +494,24 @@ Execute the commands below to build from the source.
 ## Changelog
 
 ### 1.0.0
-- Added stateful `Conversation` class for automated chat history management
-- Added batch inference operations (`batchInfer` and typed`/batch` endpoints)
-- Added Model Metadata APIs (`getModelInfo`, `checkModelAvailability`)
-- Upgraded `ragQuery` to use batch embeddings and `RagConfig`
+- Added stateful `Conversation` class for automated chat history management.
+- Added batch inference operations (`batchInfer` and typed`/batch` endpoints).
+- Added Model Metadata APIs (`getModelInfo`, `checkModelAvailability`).
+- Upgraded `ragQuery` to use batch embeddings and `RagConfig`.
 
 ### 0.3.0
-- Added streaming chat completions via `/v1/chat/completions/streamed`
-- Added RAG pipeline helper `ragQuery`
-- Added automatic retry with exponential backoff for cold-starting models (503)
-- Added image classification from file path and URL
-- Added ASR from file path and URL
-- Introduced `RetryConfig`, `RagDocument`, `RagResult`, `ImageContentType`, `AudioContentType` types
-- Generic `inferModel` helper improved with error handling
+- Added streaming chat completions via `/v1/chat/completions/streamed`.
+- Added RAG pipeline helper `ragQuery` (initial version).
+- Added automatic retry with exponential backoff for cold-starting models (503).
+- Added image classification from file path and URL.
+- Added ASR from file path and URL.
+- Introduced `RetryConfig`, `RagDocument`, `RagResult`, `ImageContentType`, `AudioContentType` types.
+- Improved generic `inferModel` helper with rich error handling.
 
-### 0.2.x
-- Initial 12 AI/ML operations
-- Generic `inferModel` helper
+### 0.2.0
+- Initial release of the `avi0ra/huggingface` connector.
+- Native support for 12 AI/ML inference operations.
+- Generic `inferModel` helper.
 
 ## Contribute to Ballerina
 
