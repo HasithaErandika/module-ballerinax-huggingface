@@ -1,5 +1,6 @@
 // Copyright (c) 2026, Hasitha Erandika (http://github.com/HasithaErandika).
 // Licensed under the Apache License, Version 2.0.
+// SPDX-License-Identifier: Apache-2.0
 
 # A stateful conversation manager that maintains full chat history across turns.
 #
@@ -61,12 +62,9 @@ public isolated class Conversation {
     # + userMessage - The user message to send
     # + return - The assistant reply as a plain string, or an error
     public isolated function chat(string userMessage) returns string|error {
-        lock {
-            self.history.push({role: "user", content: userMessage});
-        }
-
         ChatMessage[] currentHistory;
         lock {
+            self.history.push({role: "user", content: userMessage});
             currentHistory = self.history.clone();
         }
 

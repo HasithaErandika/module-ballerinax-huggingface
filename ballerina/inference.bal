@@ -1,5 +1,6 @@
 // Copyright (c) 2026, Hasitha Erandika (http://github.com/HasithaErandika).
 // Licensed under the Apache License, Version 2.0.
+// SPDX-License-Identifier: Apache-2.0
 
 import ballerina/data.jsondata;
 import ballerina/http;
@@ -13,22 +14,29 @@ import ballerina/http;
 # by the model — no suffix needed in the URL.
 #
 # + hfClient - A configured `Client` instance
-# + model - The model ID (e.g. "gpt2", "meta-llama/Llama-3.2-3B-Instruct")
+# + model - The model ID (e.g. `"gpt2"`, `"meta-llama/Llama-3.2-3B-Instruct"`)
 # + payload - JSON payload sent to the inference endpoint
-# + task - Reserved for future use — currently unused in URL routing
-# + headers - Optional additional headers
+# + headers - Optional additional HTTP headers
 # + return - The raw JSON response or an error
 public isolated function inferModel(
         Client hfClient,
         string model,
         json payload,
-        string task = "",
         map<string|string[]> headers = {}) returns json|error {
     string resourcePath = string `/hf-inference/models/${getEncodedUri(model)}`;
     http:Request request = new;
     request.setPayload(jsondata:toJson(payload), "application/json");
+    foreach [string, string|string[]] [name, value] in headers.entries() {
+        if value is string {
+            request.setHeader(name, value);
+        } else {
+            foreach string v in value {
+                request.addHeader(name, v);
+            }
+        }
+    }
     http:Client ep = hfClient.clientEp;
-    http:Response resp = check ep->post(resourcePath, request, headers);
+    http:Response resp = check ep->post(resourcePath, request);
     if resp.statusCode >= 400 {
         string|error errBody = resp.getTextPayload();
         string details = errBody is string ? errBody : "No error details available.";
@@ -81,8 +89,13 @@ public isolated function getModelInfo(
         string model) returns ModelInfo|error {
     http:Client hubClient = check new ("https://huggingface.co");
     http:Response resp = check hubClient->get(string `/api/models/${model}`);
-    if resp.statusCode == 404 {
-        return error(string `Model '${model}' not found on Hugging Face Hub.`);
+    if resp.statusCode >= 400 {
+        string|error errBody = resp.getTextPayload();
+        string details = errBody is string ? errBody : "No details available.";
+        string reason = resp.statusCode == 404
+            ? string `Model '${model}' not found on Hugging Face Hub.`
+            : string `Hub API request failed with status ${resp.statusCode}: ${details}`;
+        return error(reason);
     }
     json body = check resp.getJsonPayload();
     ModelInfo result = check body.fromJsonWithType();
@@ -113,7 +126,7 @@ public isolated function checkModelAvailability(
     boolean available = false;
     if tags is string[] {
         foreach string tag in tags {
-            if tag == "inference" || tag.includes("endpoints_compatible") {
+            if tag == "inference-api" || tag == "inference" || tag.includes("endpoints_compatible") {
                 available = true;
                 break;
             }
@@ -186,13 +199,13 @@ public isolated function ragQuery(
         return error("RAG requires at least one document.");
     }
 
-    // Step 1 — collect all texts to embed (query + all documents)
+    // collect all texts to embed (query + all documents)
     string[] allTexts = [query];
     foreach RagDocument doc in documents {
         allTexts.push(doc.content);
     }
 
-    // Step 2 — batch embed everything in one API call for efficiency
+    // batch embed everything in one API call for efficiency
     float[][] allEmbeddings = check hfClient->
         /hf\-inference/models/[config.embeddingModel]/feature\-extraction/batch.post({inputs: allTexts});
 
@@ -202,14 +215,14 @@ public isolated function ragQuery(
 
     float[] queryEmbedding = allEmbeddings[0];
 
-    // Step 3 — compute similarity scores for each document
+    // compute similarity scores for each document
     float[] scores = [];
     foreach int i in 0 ..< documents.length() {
         float similarity = cosineSimilarity(queryEmbedding, allEmbeddings[i + 1]);
         scores.push(similarity);
     }
 
-    // Step 4 — filter by threshold and select top-K
+    // filter by threshold and select top-K
     int k = int:min(config.topK, documents.length());
     int[] indices = from int i in 0 ..< scores.length()
         where scores[i] >= config.similarityThreshold
@@ -232,13 +245,13 @@ public isolated function ragQuery(
         topScores.push(scores[idx]);
     }
 
-    // Step 5 — build context from top documents
+    // build context from top documents
     string context = "";
     foreach int i in 0 ..< topDocs.length() {
         context += string `[Document ${i + 1}]: ${topDocs[i].content}\n\n`;
     }
 
-    // Step 6 — build messages array with optional system prompt
+    // build messages array with optional system prompt
     ChatMessage[] messages = [];
     if config.systemPrompt.length() > 0 {
         messages.push({role: "system", content: config.systemPrompt});
@@ -252,7 +265,7 @@ public isolated function ragQuery(
     string userPrompt = string `Context:\n${context}\nQuestion: ${query}\n\nAnswer:`;
     messages.push({role: "user", content: userPrompt});
 
-    // Step 7 — generate grounded answer
+    // generate grounded answer
     ChatCompletionResponse genResult = check hfClient->
         /v1/chat/completions.post({
             model: config.generationModel,

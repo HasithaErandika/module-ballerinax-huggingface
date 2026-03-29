@@ -36,6 +36,9 @@ public isolated client class Client {
             ConnectionConfig config,
             string serviceUrl = "https://router.huggingface.co",
             RetryConfig retryConfig = {}) returns error? {
+        if retryConfig.initialDelay <= 0.0d {
+            return error("RetryConfig.initialDelay must be greater than 0.");
+        }
         http:ClientConfiguration httpClientConfig = {
             auth: config.auth,
             httpVersion: config.httpVersion,
@@ -78,24 +81,29 @@ public isolated client class Client {
     isolated function postWithRetry(
             string resourcePath,
             http:Request request) returns http:Response|error {
-        int attempts = 0;
         decimal delay = self.retryConfig.initialDelay;
-        while attempts <= self.retryConfig.maxRetries {
-            http:Response|error response = self.clientEp->post(resourcePath, request);
+        http:Response|error response = error("Unreachable");
+        foreach int attempt in 0 ..< self.retryConfig.maxRetries {
+            response = self.clientEp->post(resourcePath, request);
             if response is error {
                 return response;
             }
-            if response.statusCode == 503 && attempts < self.retryConfig.maxRetries {
-                attempts += 1;
-                log:printInfo(string `Model loading, retrying in ${delay}s ` +
-                    string `(attempt ${attempts}/${self.retryConfig.maxRetries})...`);
-                runtime:sleep(delay);
-                delay = decimal:min(delay * 2.0d, self.retryConfig.maxDelay);
-                continue;
+            if response.statusCode != 503 {
+                return response;
             }
+            log:printInfo(string `Model loading, retrying in ${delay}s ` +
+                string `(attempt ${attempt + 1}/${self.retryConfig.maxRetries})...`);
+            runtime:sleep(delay);
+            delay = decimal:min(delay * 2.0d, self.retryConfig.maxDelay);
+        }
+        response = self.clientEp->post(resourcePath, request);
+        if response is error {
             return response;
         }
-        return error("Max retries exceeded waiting for model to load.");
+        if response.statusCode == 503 {
+            return error("Max retries exceeded waiting for model to load.");
+        }
+        return response;
     }
 
     # Sets custom headers on an HTTP request from the provided header map.
@@ -146,7 +154,12 @@ public isolated client class Client {
         return check body.fromJsonWithType();
     }
 
-    # Streaming Chat Completion — returns chunks of tokens as they are generated.
+    # Streaming Chat Completion — parses SSE chunks from the HuggingFace streaming response.
+    #
+    # > **Note:** Due to limitations of the Ballerina HTTP client, this implementation
+    # > collects the full response body before parsing SSE data lines into a stream.
+    # > All chunks are available immediately upon return; this is not true real-time streaming.
+    # > A future version will use byte-stream-based chunked I/O for genuine incremental delivery.
     #
     # + payload - Chat completion request body
     # + headers - Optional HTTP headers to include in the request
